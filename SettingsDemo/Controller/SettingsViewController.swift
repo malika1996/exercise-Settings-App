@@ -8,10 +8,6 @@
 
 import UIKit
 
-protocol SettingsSelectionProtocol {
-    func settingSelected()
-}
-
 enum DisplayDataType: String {
     case switchType, listType
 }
@@ -39,35 +35,36 @@ enum Setting: String {
         DoNotDisturb = "Do Not Disturb",
         General = "General",
         Wallpaper = "Wallpaper",
-        DisplayBrightness = "DisplayBrightness"
+        DisplayBrightness = "Display & Brightness"
 }
 
 class SettingsViewController: UIViewController {
     
-    var settingsOptionsArray = [
+    // MARK: Private class properties
+    private var settingsOptionsArray = [
         ["Airplane Mode", "Wi-Fi", "Blutooth", "Mobile Data", "Carrier"],
         ["Notifications", "Do Not Disturb"],
         ["General", "Wallpaper", "Display & Brightness"]
     ]
-    
-//    var randomColorsArray = [UIColor]()
-    
-    var data = [SettingFeature]()
-    var filtered:[SettingFeature] = []
+    private var data = [SettingFeature]()
+    private var filtered:[SettingFeature] = []
+    private var settings = Settings.shared
+    private var searchActive : Bool = false
 
+    // MARK: Private IBOutlets
+    @IBOutlet private weak var tableView: UITableView!
+    @IBOutlet private weak var searchBar: UISearchBar!
     
-    var settings = Settings.shared
-    var searchActive : Bool = false
-
-    @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var searchBar: UISearchBar!
-    
+    // MARK: View controller life cycles methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
         self.tableView.register(UINib(nibName: "ViewLabelSwitchCell", bundle: nil), forCellReuseIdentifier: "ViewLabelSwitchCell")
         self.tableView.register(UINib(nibName: "ViewLabelSelectionLabel", bundle: nil), forCellReuseIdentifier: "ViewLabelSelectionLabel")
         self.searchBar.delegate = self
+        self.prepareSettingDataArray()
+    }
+    
+    func prepareSettingDataArray() {
         let settingFeature1 = SettingFeature(name: "Airplane Mode", value: "Off")
         let settingFeature2 = SettingFeature(name: "Wi-Fi", value: "Network 1")
         let settingFeature3 = SettingFeature(name: "Blutooth", value: "Off")
@@ -77,19 +74,13 @@ class SettingsViewController: UIViewController {
         let settingFeature7 = SettingFeature(name: "Do Not Disturb", value: "Off")
         let settingFeature8 = SettingFeature(name: "General", value: "")
         let settingFeature9 = SettingFeature(name: "Wallpaper", value: "")
-        let settingFeature10 = SettingFeature(name: "DisplayBrightness", value: "")
-        self.data = [settingFeature1, settingFeature2, settingFeature3, settingFeature4, settingFeature5, settingFeature6, settingFeature7, settingFeature8, settingFeature9, settingFeature10]
+        let settingFeature10 = SettingFeature(name: "Display & Brightness", value: "")
         
+        self.data = [settingFeature1, settingFeature2, settingFeature3, settingFeature4, settingFeature5, settingFeature6, settingFeature7, settingFeature8, settingFeature9, settingFeature10]
     }
-//
-//    func colorGenerator() {
-//        for _ in 0..<10 {
-//            self.randomColorsArray.append(UIColor.random)
-//        }
-//    }
-//
 }
 
+// MARK: Tableview delegate methods
 extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -113,7 +104,7 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
             switch settingFeature.name {
             case Setting.AirplaneMode.rawValue:
                 guard let cell = self.tableView.dequeueReusableCell(withIdentifier: "ViewLabelSwitchCell") as? ViewLabelSwitchCell else {return UITableViewCell()}
-                cell.lblSettingName.text = settingFeature.name//self.settingsOptionsArray[indexPath.section][indexPath.row]
+                cell.lblSettingName.text = settingFeature.name
                 cell.mySwitch.setOn(self.settings.airplaneMode == "On" ? true : false, animated: true)
                 cell.mySwitch.tag = NetworkSection.AirplaneMode.rawValue
                 cell.mySwitch.addTarget(self, action: #selector(switchStateChanged(_:)), for: .valueChanged)
@@ -121,7 +112,7 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
             case Setting.WiFi.rawValue, Setting.Blutooth.rawValue, Setting.Carrier.rawValue:
                 guard let cell = self.tableView.dequeueReusableCell(withIdentifier: "ViewLabelSelectionLabel") as? ViewLabelSelectionLabel else {return UITableViewCell()}
                 cell.lblSelectedChoice.isHidden = false
-                cell.lblSettingName.text = settingFeature.name //self.settingsOptionsArray[indexPath.section][indexPath.row]
+                cell.lblSettingName.text = settingFeature.name
                 cell.coloredView.backgroundColor = .random
                 if settingFeature.name == Setting.WiFi.rawValue {
                     cell.lblSelectedChoice.text = self.settings.wiFi
@@ -133,20 +124,15 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
                 return cell
             case Setting.MobileData.rawValue:
                 guard let cell = self.tableView.dequeueReusableCell(withIdentifier: "ViewLabelSelectionLabel") as? ViewLabelSelectionLabel else {return UITableViewCell()}
-                cell.lblSettingName.text = settingFeature.name//self.settingsOptionsArray[indexPath.section][indexPath.row]
+                cell.lblSettingName.text = settingFeature.name
                 cell.coloredView.backgroundColor = .random
                 cell.lblSelectedChoice.isHidden = true
                 return cell
             case Setting.Notifications.rawValue, "General", "Wallpaper", Setting.DisplayBrightness.rawValue, Setting.DoNotDisturb.rawValue:
                 guard let cell = self.tableView.dequeueReusableCell(withIdentifier: "ViewLabelSelectionLabel") as? ViewLabelSelectionLabel else {return UITableViewCell()}
-                cell.lblSettingName.text = settingFeature.name//self.settingsOptionsArray[indexPath.section][indexPath.row]
+                cell.lblSettingName.text = settingFeature.name
                 cell.coloredView.backgroundColor = .random
                 cell.lblSelectedChoice.isHidden = true
-//                if indexPath.row == self.settingsOptionsArray[indexPath.section].count-1 {
-//                    cell.line.isHidden = true
-//                } else {
-//                    cell.line.isHidden = false
-//                }
                 return cell
             default:
                 break
@@ -220,100 +206,23 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
             let settingFeature = self.filtered[indexPath.row]
             switch settingFeature.name {
             case Setting.WiFi.rawValue:
-                if let vc = self.storyboard?.instantiateViewController(withIdentifier: "DropDownOptionsViewController") as? DropDownOptionsViewController {
-                    vc.delegate = self
-                    vc.displayDataType = DisplayDataType.listType
-                    vc.listItems = ["Network 1", "Network 2", "Network 3", "Network 4", "Network 5"]
-                    vc.currentSetting = Setting.WiFi.rawValue
-                    if (self.splitViewController?.viewControllers.count)!<=1 {
-                        self.navigationController?.pushViewController(vc, animated: true)
-                    } else {
-                        
-                        self.splitViewController?.viewControllers[1] = vc
-                    }
-                }
+                self.wiFiSettingAction()
             case Setting.Carrier.rawValue:
-                if let vc = self.storyboard?.instantiateViewController(withIdentifier: "DropDownOptionsViewController") as? DropDownOptionsViewController {
-                    vc.delegate = self
-                    vc.displayDataType = DisplayDataType.listType
-                    vc.listItems = ["Carrier 1", "Carrier 2", "Carrier 3", "Carrier 4", "Carrier 5"]
-                    vc.currentSetting = Setting.Carrier.rawValue
-                    if (self.splitViewController?.viewControllers.count)!<=1 {
-                        self.navigationController?.pushViewController(vc, animated: true)
-                    } else {
-                        self.splitViewController?.viewControllers[1] = vc
-                    }
-                }
+                self.carrierSettingAction()
             case Setting.MobileData.rawValue:
-                if let vc = self.storyboard?.instantiateViewController(withIdentifier: "CellularSettingViewController") as? CellularSettingViewController {
-                    vc.delegate = self
-                    vc.currentSetting = Setting.MobileData.rawValue
-                    if (self.splitViewController?.viewControllers.count)!<=1 {
-                        self.navigationController?.pushViewController(vc, animated: true)
-                    } else {
-                        self.splitViewController?.viewControllers[1] = vc
-                    }
-                }
+                self.mobileDataSettingAction()
             case Setting.Blutooth.rawValue:
-                if let vc = self.storyboard?.instantiateViewController(withIdentifier: "DropDownOptionsViewController") as? DropDownOptionsViewController {
-                    vc.delegate = self
-                    vc.displayDataType = DisplayDataType.switchType
-                    vc.currentSetting = Setting.Blutooth.rawValue
-                    if (self.splitViewController?.viewControllers.count)!<=1 {
-                        self.navigationController?.pushViewController(vc, animated: true)
-                    } else {
-                        self.splitViewController?.viewControllers[1] = vc
-                    }
-                }
+                self.blutoothSettingAction()
             case Setting.Notifications.rawValue:
-                if let vc = self.storyboard?.instantiateViewController(withIdentifier: "DropDownOptionsViewController") as? DropDownOptionsViewController {
-                    vc.delegate = self
-                    vc.displayDataType = DisplayDataType.switchType
-                    vc.currentSetting = Setting.Notifications.rawValue
-                    if (self.splitViewController?.viewControllers.count)!<=1 {
-                        self.navigationController?.pushViewController(vc, animated: true)
-                    } else {
-                        self.splitViewController?.viewControllers[1] = vc
-                    }
-                }
+                self.notificationsSettingAction()
             case Setting.DoNotDisturb.rawValue:
-                if let vc = self.storyboard?.instantiateViewController(withIdentifier: "DNDViewController") as? DNDViewController {
-                    vc.delegate = self
-                    vc.currentSetting = Setting.DoNotDisturb.rawValue
-                    if (self.splitViewController?.viewControllers.count)!<=1 {
-                        self.navigationController?.pushViewController(vc, animated: true)
-                    } else {
-                        self.splitViewController?.viewControllers[1] = vc
-                    }
-                }
+                self.dndSettingAction()
             case Setting.General.rawValue:
-                if let vc = self.storyboard?.instantiateViewController(withIdentifier: "SimpleTextViewController") as? SimpleTextViewController {
-                    vc.descriptionText = "General Screen"
-                    vc.navigationItem.title = "General"
-                    if (self.splitViewController?.viewControllers.count)!<=1 {
-                        self.navigationController?.pushViewController(vc, animated: true)
-                    } else {
-                        self.splitViewController?.viewControllers[1] = vc
-                    }
-                }
+                self.generalSettingAction()
             case Setting.Wallpaper.rawValue:
-                if let vc = self.storyboard?.instantiateViewController(withIdentifier: "SimpleTextViewController") as? SimpleTextViewController {
-                    vc.descriptionText = "Wallpaper Screen"
-                    vc.navigationItem.title = "Wallpaper"
-                    if (self.splitViewController?.viewControllers.count)!<=1 {
-                        self.navigationController?.pushViewController(vc, animated: true)
-                    } else {
-                        self.splitViewController?.viewControllers[1] = vc
-                    }
-                }
+                self.wallpaperSettingAction()
             case Setting.DisplayBrightness.rawValue:
-                if let vc = self.storyboard?.instantiateViewController(withIdentifier: "DisplayBrightnessViewController") as? DisplayBrightnessViewController {
-                    if (self.splitViewController?.viewControllers.count)!<=1 {
-                        self.navigationController?.pushViewController(vc, animated: true)
-                    } else {
-                        self.splitViewController?.viewControllers[1] = vc
-                    }
-                }
+                self.displayBrightnessSettingAction()
             default:
                 break
             }
@@ -321,120 +230,170 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
             switch indexPath.section {
                 case Section.NetworkSection.rawValue:
                 switch indexPath.row {
-                case NetworkSection.WiFi.rawValue:
-                    if let vc = self.storyboard?.instantiateViewController(withIdentifier: "DropDownOptionsViewController") as? DropDownOptionsViewController {
-                        vc.delegate = self
-                        vc.displayDataType = DisplayDataType.listType
-                        vc.listItems = ["Network 1", "Network 2", "Network 3", "Network 4", "Network 5"]
-                        vc.currentSetting = Setting.WiFi.rawValue
-                        if (self.splitViewController?.viewControllers.count)!<=1 {
-                            self.navigationController?.pushViewController(vc, animated: true)
-                        } else {
-                            
-                            self.splitViewController?.viewControllers[1] = vc
-                        }
+                    case NetworkSection.WiFi.rawValue:
+                        self.wiFiSettingAction()
+                    case NetworkSection.Carrier.rawValue:
+                        self.carrierSettingAction()
+                    case NetworkSection.MobileData.rawValue:
+                        self.mobileDataSettingAction()
+                    case NetworkSection.Blutooth.rawValue:
+                        self.blutoothSettingAction()
+                    default:
+                        break
                     }
-                case NetworkSection.Carrier.rawValue:
-                    if let vc = self.storyboard?.instantiateViewController(withIdentifier: "DropDownOptionsViewController") as? DropDownOptionsViewController {
-                        vc.delegate = self
-                        vc.displayDataType = DisplayDataType.listType
-                        vc.listItems = ["Carrier 1", "Carrier 2", "Carrier 3", "Carrier 4", "Carrier 5"]
-                        vc.currentSetting = Setting.Carrier.rawValue
-                        if (self.splitViewController?.viewControllers.count)!<=1 {
-                            self.navigationController?.pushViewController(vc, animated: true)
-                        } else {
-                            self.splitViewController?.viewControllers[1] = vc
-                        }
-                    }
-                case NetworkSection.MobileData.rawValue:
-                    if let vc = self.storyboard?.instantiateViewController(withIdentifier: "CellularSettingViewController") as? CellularSettingViewController {
-                        vc.delegate = self
-                        vc.currentSetting = Setting.MobileData.rawValue
-                        if (self.splitViewController?.viewControllers.count)!<=1 {
-                            self.navigationController?.pushViewController(vc, animated: true)
-                        } else {
-                            self.splitViewController?.viewControllers[1] = vc
-                        }                    }
-                case NetworkSection.Blutooth.rawValue:
-                    if let vc = self.storyboard?.instantiateViewController(withIdentifier: "DropDownOptionsViewController") as? DropDownOptionsViewController {
-                        vc.delegate = self
-                        vc.displayDataType = DisplayDataType.switchType
-                        vc.currentSetting = Setting.Blutooth.rawValue
-                        if (self.splitViewController?.viewControllers.count)!<=1 {
-                            self.navigationController?.pushViewController(vc, animated: true)
-                        } else {
-                            self.splitViewController?.viewControllers[1] = vc
-                        }
-                    }
-                default:
-                    break
-                }
                 case Section.Notifications.rawValue:
                 switch indexPath.row {
-                case NotificationsSection.Notifications.rawValue:
-                    if let vc = self.storyboard?.instantiateViewController(withIdentifier: "DropDownOptionsViewController") as? DropDownOptionsViewController {
-                        vc.delegate = self
-                        vc.displayDataType = DisplayDataType.switchType
-                        vc.currentSetting = Setting.Notifications.rawValue
-                        if (self.splitViewController?.viewControllers.count)!<=1 {
-                            self.navigationController?.pushViewController(vc, animated: true)
-                        } else {
-                            self.splitViewController?.viewControllers[1] = vc
-                        }
-                    }
-                case NotificationsSection.DoNotDisturb.rawValue:
-                    if let vc = self.storyboard?.instantiateViewController(withIdentifier: "DNDViewController") as? DNDViewController {
-                        vc.delegate = self
-                        vc.currentSetting = Setting.DoNotDisturb.rawValue
-                        if (self.splitViewController?.viewControllers.count)!<=1 {
-                            self.navigationController?.pushViewController(vc, animated: true)
-                        } else {
-                            self.splitViewController?.viewControllers[1] = vc
-                        }
-                    }
-                default:
-                    break
+                    case NotificationsSection.Notifications.rawValue:
+                        self.notificationsSettingAction()
+                    case NotificationsSection.DoNotDisturb.rawValue:
+                        self.dndSettingAction()
+                    default:
+                        break
                 }
-                
                 case Section.General.rawValue:
-                switch indexPath.row {
-                case GeneralSection.General.rawValue:
-                    if let vc = self.storyboard?.instantiateViewController(withIdentifier: "SimpleTextViewController") as? SimpleTextViewController {
-                        vc.descriptionText = "General Screen"
-                        vc.navigationItem.title = "General"
-                        if (self.splitViewController?.viewControllers.count)!<=1 {
-                            self.navigationController?.pushViewController(vc, animated: true)
-                        } else {
-                            self.splitViewController?.viewControllers[1] = vc
-                        }
+                    switch indexPath.row {
+                    case GeneralSection.General.rawValue:
+                        self.generalSettingAction()
+                    case GeneralSection.Wallpaper.rawValue:
+                        self.wallpaperSettingAction()
+                    case GeneralSection.DisplayBrightness.rawValue:
+                        self.displayBrightnessSettingAction()
+                    default:
+                        break
                     }
-                case GeneralSection.Wallpaper.rawValue:
-                    if let vc = self.storyboard?.instantiateViewController(withIdentifier: "SimpleTextViewController") as? SimpleTextViewController {
-                        vc.descriptionText = "Wallpaper Screen"
-                        vc.navigationItem.title = "Wallpaper"
-                        if (self.splitViewController?.viewControllers.count)!<=1 {
-                            self.navigationController?.pushViewController(vc, animated: true)
-                        } else {
-                            self.splitViewController?.viewControllers[1] = vc
-                        }                    }
-                case GeneralSection.DisplayBrightness.rawValue:
-                    if let vc = self.storyboard?.instantiateViewController(withIdentifier: "DisplayBrightnessViewController") as? DisplayBrightnessViewController {
-                        if (self.splitViewController?.viewControllers.count)!<=1 {
-                            self.navigationController?.pushViewController(vc, animated: true)
-                        } else {
-                            self.splitViewController?.viewControllers[1] = vc
-                        }
-                    }
-                default:
-                    break
-                }
                 default:
                 break
             }
         }
-        
-        
-        
+    }
+    
+    // MARK: Cell actions methods
+    func wiFiSettingAction() {
+        if let vc = self.storyboard?.instantiateViewController(withIdentifier: "DropDownOptionsViewController") as? DropDownOptionsViewController {
+            vc.delegate = self
+            vc.displayDataType = DisplayDataType.listType
+            vc.listItems = ["Network 1", "Network 2", "Network 3", "Network 4", "Network 5"]
+            vc.currentSetting = Setting.WiFi.rawValue
+            vc.navigationItem.title = Setting.WiFi.rawValue
+            if (self.splitViewController?.viewControllers.count)!<=1 {
+                self.navigationController?.pushViewController(vc, animated: true)
+            } else {
+                let navController = UINavigationController(rootViewController: vc)
+                self.splitViewController?.viewControllers[1] = navController
+            }
+        }
+    }
+    
+    func carrierSettingAction() {
+        if let vc = self.storyboard?.instantiateViewController(withIdentifier: "DropDownOptionsViewController") as? DropDownOptionsViewController {
+            vc.delegate = self
+            vc.displayDataType = DisplayDataType.listType
+            vc.listItems = ["Carrier 1", "Carrier 2", "Carrier 3", "Carrier 4", "Carrier 5"]
+            vc.currentSetting = Setting.Carrier.rawValue
+            vc.navigationItem.title = Setting.Carrier.rawValue
+            if (self.splitViewController?.viewControllers.count)!<=1 {
+                self.navigationController?.pushViewController(vc, animated: true)
+            } else {
+                let navController = UINavigationController(rootViewController: vc)
+                self.splitViewController?.viewControllers[1] = navController
+            }
+        }
+    }
+    
+    func mobileDataSettingAction() {
+        if let vc = self.storyboard?.instantiateViewController(withIdentifier: "CellularSettingViewController") as? CellularSettingViewController {
+            vc.delegate = self
+            vc.currentSetting = Setting.MobileData.rawValue
+            vc.navigationItem.title = Setting.MobileData.rawValue
+            if (self.splitViewController?.viewControllers.count)!<=1 {
+                self.navigationController?.pushViewController(vc, animated: true)
+            } else {
+                let navController = UINavigationController(rootViewController: vc)
+                self.splitViewController?.viewControllers[1] = navController
+            }
+        }
+    }
+    
+    func blutoothSettingAction() {
+        if let vc = self.storyboard?.instantiateViewController(withIdentifier: "DropDownOptionsViewController") as? DropDownOptionsViewController {
+            vc.delegate = self
+            vc.displayDataType = DisplayDataType.switchType
+            vc.currentSetting = Setting.Blutooth.rawValue
+            vc.navigationItem.title = Setting.Blutooth.rawValue
+            if (self.splitViewController?.viewControllers.count)!<=1 {
+                self.navigationController?.pushViewController(vc, animated: true)
+            } else {
+                let navController = UINavigationController(rootViewController: vc)
+                self.splitViewController?.viewControllers[1] = navController
+            }
+        }
+    }
+    
+    func notificationsSettingAction() {
+        if let vc = self.storyboard?.instantiateViewController(withIdentifier: "DropDownOptionsViewController") as? DropDownOptionsViewController {
+            vc.delegate = self
+            vc.displayDataType = DisplayDataType.switchType
+            vc.currentSetting = Setting.Notifications.rawValue
+            vc.navigationItem.title = Setting.Notifications.rawValue
+            if (self.splitViewController?.viewControllers.count)!<=1 {
+                self.navigationController?.pushViewController(vc, animated: true)
+            } else {
+                let navController = UINavigationController(rootViewController: vc)
+                self.splitViewController?.viewControllers[1] = navController
+            }
+        }
+    }
+    
+    func dndSettingAction() {
+        if let vc = self.storyboard?.instantiateViewController(withIdentifier: "DNDViewController") as? DNDViewController {
+            vc.delegate = self
+            vc.currentSetting = Setting.DoNotDisturb.rawValue
+            vc.navigationItem.title = Setting.DoNotDisturb.rawValue
+            if (self.splitViewController?.viewControllers.count)!<=1 {
+                self.navigationController?.pushViewController(vc, animated: true)
+            } else {
+                let navController = UINavigationController(rootViewController: vc)
+                self.splitViewController?.viewControllers[1] = navController
+            }
+        }
+    }
+    
+    func generalSettingAction() {
+        if let vc = self.storyboard?.instantiateViewController(withIdentifier: "SimpleTextViewController") as? SimpleTextViewController {
+            vc.descriptionText = "General Screen"
+            vc.navigationItem.title = Setting.General.rawValue
+            if (self.splitViewController?.viewControllers.count)!<=1 {
+                self.navigationController?.pushViewController(vc, animated: true)
+            } else {
+                let navController = UINavigationController(rootViewController: vc)
+                self.splitViewController?.viewControllers[1] = navController
+            }
+        }
+    }
+    
+    func wallpaperSettingAction() {
+        if let vc = self.storyboard?.instantiateViewController(withIdentifier: "SimpleTextViewController") as? SimpleTextViewController {
+            vc.descriptionText = "Wallpaper Screen"
+            vc.navigationItem.title = Setting.Wallpaper.rawValue
+            if (self.splitViewController?.viewControllers.count)!<=1 {
+                self.navigationController?.pushViewController(vc, animated: true)
+            } else {
+                let navController = UINavigationController(rootViewController: vc)
+                self.splitViewController?.viewControllers[1] = navController
+            }
+        }
+    }
+    
+    func displayBrightnessSettingAction() {
+        if let vc = self.storyboard?.instantiateViewController(withIdentifier: "DisplayBrightnessViewController") as? DisplayBrightnessViewController {
+            vc.navigationItem.title = Setting.DisplayBrightness.rawValue
+            if (self.splitViewController?.viewControllers.count)!<=1 {
+                self.navigationController?.pushViewController(vc, animated: true)
+            } else {
+                let navController = UINavigationController(rootViewController: vc)
+                self.splitViewController?.viewControllers[1] = navController
+            }
+        }
     }
     
     @objc func switchStateChanged(_ mySwitch: UISwitch) {
@@ -446,24 +405,13 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
             }
         }
     }
-    
 }
 
+// MARK: Search bar delegate methods
 extension SettingsViewController: UISearchBarDelegate {
-    
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         self.filtered = []
-        //searchActive = true
     }
-    
-//    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
-//        //searchActive = false
-//    }
-    
-//    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-//        searchActive = false
-//        self.tableView.reloadData()
-//    }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         var filteredDataSource : [SettingFeature] = []
@@ -473,11 +421,7 @@ extension SettingsViewController: UISearchBarDelegate {
                 if settingFeature.name.lowercased().prefix(searchText.count) == searchText.lowercased() {
                     searchActive = true
                     filteredDataSource.append(settingFeature)
-                    //break
-                    //return true
                 }
-                //return false
-                //filteredDataSource.append(settingFeature)
             }
         }
         self.filtered = filteredDataSource
@@ -485,60 +429,15 @@ extension SettingsViewController: UISearchBarDelegate {
         self.tableView.reloadData()
     }
     
-    
-//        searchActive = false
-    
-    
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        
         if searchText == "" {
             self.searchActive = false
             self.tableView.reloadData()
         }
-        
-        
-//        filtered = data.filter({ (settingFeature) -> Bool in
-//            let tmp: NSString = settingFeature.name as NSString
-//            let range = tmp.rangeOfString(searchText, options: NSString.CompareOptions.CaseInsensitiveSearch)
-//            return range.location != NSNotFound
-//        })
-//        if(filtered.count == 0){
-//            searchActive = false
-//        } else {
-//            searchActive = true
-//        }
-        
-//        self.dataSource = values
-//        var filteredDataSource : [SettingFeature] = []
-//        searchActive = false
-//        for settingFeature in data {
-////            let filteredItems = items.filter { (settingFeature) -> Bool in
-//                if settingFeature.name.lowercased().prefix(searchText.count) == searchText.lowercased() {
-//                    searchActive = true
-//                    filteredDataSource.append(settingFeature)
-//                    break
-//                    //return true
-//                } else {
-//                    searchActive = false
-//                }
-//                //return false
-////            }
-//            filteredDataSource.append(settingFeature)
-//        }
-//        self.filtered = filteredDataSource
-//        self.tableView.reloadData()
     }
 }
 
-extension UIColor {
-    static var random: UIColor {
-        return UIColor(red: .random(in: 0...1),
-                       green: .random(in: 0...1),
-                       blue: .random(in: 0...1),
-                       alpha: 1.0)
-    }
-}
-
+// MARK: Protocol conformation
 extension SettingsViewController: SelectedDataSendProtocol {
     
     func sendSelectedOption(settingName: String, selectedOption: String) {
@@ -563,3 +462,15 @@ extension SettingsViewController: SelectedDataSendProtocol {
         self.tableView.reloadData()
     }
 }
+
+// MARK: UIColor extension
+extension UIColor {
+    static var random: UIColor {
+        return UIColor(red: .random(in: 0...1),
+                       green: .random(in: 0...1),
+                       blue: .random(in: 0...1),
+                       alpha: 1.0)
+    }
+}
+
+

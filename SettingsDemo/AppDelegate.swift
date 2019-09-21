@@ -21,7 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         guard let splitViewController = window?.rootViewController as? UISplitViewController,
             let leftNavController = splitViewController.viewControllers.first as? UINavigationController,
             let masterViewController = leftNavController.topViewController as? SettingsViewController,
-            let detailViewController = splitViewController.viewControllers.last as? SimpleTextViewController
+            let detailViewController = splitViewController.viewControllers.last as? UINavigationController
             else { fatalError() }
         return true
     }

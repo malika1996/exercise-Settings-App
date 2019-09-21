@@ -8,6 +8,13 @@
 
 import UIKit
 
+enum DisplayOptions: String {
+    case NightShift = "Night Shift",
+         AutoLock = "Auto Lock",
+         TextSize = "Text Size",
+         View = "View"
+}
+
 class DisplayBrightnessViewController: UIViewController {
 
     @IBOutlet weak var tableView: UITableView!
@@ -20,7 +27,6 @@ class DisplayBrightnessViewController: UIViewController {
         ["View"],
         []
     ]
-    
     var headerViewTitle = ["BRIGHTNESS","", "", "", "DISPLAY ZOOM", "Choose a view from iPhone. Zoomed shows larger controls. Standard shows more content."]
     
     override func viewDidLoad() {
@@ -29,9 +35,7 @@ class DisplayBrightnessViewController: UIViewController {
         self.tableView.register(UINib(nibName: "ViewLabelSwitchCell", bundle: nil), forCellReuseIdentifier: "ViewLabelSwitchCell")
         self.tableView.register(UINib(nibName: "ViewLabelSelectionLabel", bundle: nil), forCellReuseIdentifier: "ViewLabelSelectionLabel")
         self.navigationItem.title = "Display & Brightness"
-
     }
-    
 }
 
 extension DisplayBrightnessViewController: UITableViewDelegate, UITableViewDataSource {
@@ -55,6 +59,7 @@ extension DisplayBrightnessViewController: UITableViewDelegate, UITableViewDataS
             cell.leadingConstraintOfLblSettingName.constant = 20
             cell.leadingConstraintOfLine.constant = 18
             cell.lblSettingName.text = self.displaySettingsOptionsArray[indexPath.section][indexPath.row]
+            cell.lblSelectedChoice.text = indexPath.section == 1 ? "Off" : "1 Minute"
             return cell
         case 3:
             switch indexPath.row {
@@ -65,11 +70,6 @@ extension DisplayBrightnessViewController: UITableViewDelegate, UITableViewDataS
                 cell.lblSelectedChoice.isHidden = true
                 cell.leadingConstraintOfLblSettingName.constant = 20
                 cell.leadingConstraintOfLine.constant = 18
-                if indexPath.row == self.displaySettingsOptionsArray[indexPath.section].count-1 {
-                    cell.line.isHidden = true
-                } else {
-                    cell.line.isHidden = false
-                }
                 return cell
             case 1:
                 guard let cell = self.tableView.dequeueReusableCell(withIdentifier: "ViewLabelSwitchCell") as? ViewLabelSwitchCell else {return UITableViewCell()}
@@ -87,6 +87,7 @@ extension DisplayBrightnessViewController: UITableViewDelegate, UITableViewDataS
             cell.leadingConstraintOfLblSettingName.constant = 20
             cell.leadingConstraintOfLine.constant = 18
             cell.lblSettingName.text = self.displaySettingsOptionsArray[indexPath.section][indexPath.row]
+            cell.lblSelectedChoice.text = "Standard"
             return cell
         default:
             break
@@ -94,24 +95,45 @@ extension DisplayBrightnessViewController: UITableViewDelegate, UITableViewDataS
         return UITableViewCell()
     }
     
-//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        switch indexPath.section {
-//        case 1:
-//            if indexPath.row == 0 {
-//                if let vc = self.storyboard?.instantiateViewController(withIdentifier: "DropDownOptionsViewController") as? DropDownOptionsViewController {
-////                    vc.delegate = self
-//                    vc.displayDataType = DisplayDataType.listType
-////                    vc.currentSetting = Setting.Blutooth.rawValue
-//                    vc.listItems = ["Network 1", "Network 2", "Network 3", "Network 4", "Network 5"]
-//                    self.present(vc, animated: true, completion: nil)
-//                    //                    self.splitViewController?.viewControllers[1] = vc
-//                    //                    self.navigationController?.pushViewController(vc, animated: true)
-//                }
-//            }
-//        default:
-//            break
-//        }
-//    }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        switch indexPath.section {
+        case 1:
+            if let vc = self.storyboard?.instantiateViewController(withIdentifier: "DropDownOptionsViewController") as? DropDownOptionsViewController {
+                vc.displayDataType = DisplayDataType.switchType
+                vc.currentSetting = DisplayOptions.NightShift.rawValue
+                vc.navigationItem.title = DisplayOptions.NightShift.rawValue
+                self.navigationController?.pushViewController(vc, animated: true)
+            }
+        case 2:
+            if let vc = self.storyboard?.instantiateViewController(withIdentifier: "DropDownOptionsViewController") as? DropDownOptionsViewController {
+                vc.displayDataType = DisplayDataType.listType
+                vc.listItems = ["1 Minute", "5 Minutes", "10 Minutes", "15 Minutes"]
+                vc.currentSetting = DisplayOptions.AutoLock.rawValue
+                vc.navigationItem.title = DisplayOptions.AutoLock.rawValue
+                self.navigationController?.pushViewController(vc, animated: true)
+            }
+        case 3:
+            if indexPath.row == 0 {
+                if let vc = self.storyboard?.instantiateViewController(withIdentifier: "DropDownOptionsViewController") as? DropDownOptionsViewController {
+                    vc.displayDataType = DisplayDataType.listType
+                    vc.listItems = ["5 pts", "8 pts", "12 pts"]
+                    vc.currentSetting = DisplayOptions.TextSize.rawValue
+                    vc.navigationItem.title = DisplayOptions.TextSize.rawValue
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
+        case 4:
+            if let vc = self.storyboard?.instantiateViewController(withIdentifier: "DropDownOptionsViewController") as? DropDownOptionsViewController {
+                vc.displayDataType = DisplayDataType.listType
+                vc.listItems = ["Horizontal", "Vertical"]
+                vc.currentSetting = DisplayOptions.View.rawValue
+                vc.navigationItem.title = DisplayOptions.View.rawValue
+                self.navigationController?.pushViewController(vc, animated: true)
+            }
+        default:
+            break
+        }
+    }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let headerView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: tableView.frame.width, height: 100))
@@ -134,3 +156,4 @@ extension DisplayBrightnessViewController: UITableViewDelegate, UITableViewDataS
         }
     }
 }
+

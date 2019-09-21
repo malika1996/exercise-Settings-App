@@ -19,25 +19,15 @@ class DropDownOptionsViewController: UIViewController {
     var listItems: [String]?
     var currentSetting: String?
     var selectedOption: String?
-    
     let standaloneItem = UINavigationItem()
-    
     let navigationBar = UINavigationBar()
+    
     @IBOutlet weak var tableView: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.register(UINib(nibName: "ViewLabelSwitchCell", bundle: nil), forCellReuseIdentifier: "ViewLabelSwitchCell")
         }
-    
-//    override func viewDidDisappear(_ animated: Bool) {
-//        if let currentSetting = self.currentSetting, let selectedOption = self.selectedOption {
-//            self.delegate?.sendSelectedOption(settingName: currentSetting, selectedOption: selectedOption)
-//            self.navigationController?.popViewController(animated: true)
-//        }
-//    }
-    
- 
 }
 
 extension DropDownOptionsViewController: UITableViewDataSource, UITableViewDelegate {
@@ -105,7 +95,6 @@ extension DropDownOptionsViewController: UITableViewDataSource, UITableViewDeleg
         }
         if let currentSetting = self.currentSetting, let selectedOption = self.selectedOption {
             self.delegate?.sendSelectedOption(settingName: currentSetting, selectedOption: selectedOption)
-//            self.navigationController?.popViewController(animated: true)
         }
     }
     

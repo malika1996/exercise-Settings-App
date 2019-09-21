@@ -34,7 +34,6 @@ class CellularSettingViewController: UIViewController {
             self.delegate?.sendSelectedOption(settingName: currentSetting, selectedOption: selectedOption)
         }
     }
-
 }
 
 extension CellularSettingViewController: UITableViewDelegate, UITableViewDataSource {
@@ -62,7 +61,18 @@ extension CellularSettingViewController: UITableViewDelegate, UITableViewDataSou
             cell.leadingConstraintOfLblSettingName.constant = 20
             cell.leadingConstraintOfLine.constant = 18
             cell.lblSettingName.text = self.cellularSettingsOptionsArray[indexPath.section][indexPath.row]
+            cell.lblSelectedChoice.text = "Roaming On"
             return cell
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if let vc = self.storyboard?.instantiateViewController(withIdentifier: "DropDownOptionsViewController") as? DropDownOptionsViewController {
+            vc.displayDataType = DisplayDataType.listType
+            vc.listItems = ["Roaming On", "Roaming Off"]
+            vc.currentSetting = "Cellular Data Options"
+            vc.navigationItem.title = "Cellular Data Options"
+            self.navigationController?.pushViewController(vc, animated: true)
         }
     }
     

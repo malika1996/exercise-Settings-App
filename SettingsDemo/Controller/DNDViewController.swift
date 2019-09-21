@@ -32,7 +32,6 @@ class DNDViewController: UIViewController {
             self.delegate?.sendSelectedOption(settingName: currentSetting, selectedOption: selectedOption)
         }
     }
-
 }
 
 extension DNDViewController: UITableViewDelegate, UITableViewDataSource {
@@ -83,5 +82,4 @@ extension DNDViewController: UITableViewDelegate, UITableViewDataSource {
             self.selectedOption = "Off"
         }
     }
-    
 }
