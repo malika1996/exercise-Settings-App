@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14492.1" systemVersion="18F132" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Settings" representedClassName=".SettingsNSManagedClass" syncable="YES" codeGenerationType="class">
+        <attribute name="airplaneMode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="bluetooth" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="carrier" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="dnd" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="mobileData" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="notifications" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="wiFi" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Settings" positionX="-63" positionY="-18" width="128" height="150"/>
+    </elements>
+</model>
