@@ -55,6 +55,17 @@ class SettingsViewController: UIViewController {
     @IBOutlet private weak var tableView: UITableView!
     @IBOutlet private weak var searchBar: UISearchBar!
     
+    // MARK: Actions
+    @objc func switchStateChanged(_ mySwitch: UISwitch) {
+        if mySwitch.tag == NetworkSection.AirplaneMode.rawValue {
+            if mySwitch.isOn {
+                Settings.shared.airplaneMode = "On"
+            } else {
+                Settings.shared.airplaneMode = "Off"
+            }
+        }
+    }
+    
     // MARK: View controller life cycles methods
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,7 +75,8 @@ class SettingsViewController: UIViewController {
         self.prepareSettingDataArray()
     }
     
-    func prepareSettingDataArray() {
+    // MARK: Setup methods
+    private func prepareSettingDataArray() {
         let settingFeature1 = SettingFeature(name: "Airplane Mode", value: "Off")
         let settingFeature2 = SettingFeature(name: "Wi-Fi", value: "Network 1")
         let settingFeature3 = SettingFeature(name: "Blutooth", value: "Off")
@@ -82,7 +94,6 @@ class SettingsViewController: UIViewController {
 
 // MARK: Tableview delegate methods
 extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
-    
     func numberOfSections(in tableView: UITableView) -> Int {
         if self.searchActive == true {
             return 1
@@ -98,37 +109,16 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         if self.searchActive == true {
             let settingFeature = self.filtered[indexPath.row]
             switch settingFeature.name {
             case Setting.AirplaneMode.rawValue:
-                guard let cell = self.tableView.dequeueReusableCell(withIdentifier: "ViewLabelSwitchCell") as? ViewLabelSwitchCell else {return UITableViewCell()}
-                cell.lblSettingName.text = settingFeature.name
-                cell.mySwitch.setOn(self.settings.airplaneMode == "On" ? true : false, animated: true)
-                cell.mySwitch.tag = NetworkSection.AirplaneMode.rawValue
-                cell.mySwitch.addTarget(self, action: #selector(switchStateChanged(_:)), for: .valueChanged)
-                return cell
+                return self.setupAirplaneModeCell(section: indexPath.section, row: indexPath.row) ?? UITableViewCell()
             case Setting.WiFi.rawValue, Setting.Blutooth.rawValue, Setting.Carrier.rawValue:
-                guard let cell = self.tableView.dequeueReusableCell(withIdentifier: "ViewLabelSelectionLabel") as? ViewLabelSelectionLabel else {return UITableViewCell()}
-                cell.lblSelectedChoice.isHidden = false
-                cell.lblSettingName.text = settingFeature.name
-                cell.coloredView.backgroundColor = .random
-                if settingFeature.name == Setting.WiFi.rawValue {
-                    cell.lblSelectedChoice.text = self.settings.wiFi
-                } else if settingFeature.name == Setting.Blutooth.rawValue {
-                    cell.lblSelectedChoice.text = self.settings.bluetooth
-                } else if settingFeature.name == Setting.Carrier.rawValue {
-                    cell.lblSelectedChoice.text = self.settings.carrier
-                }
-                return cell
+                return self.setupWiFiBlutoothCarrierCell(section: indexPath.section, row: indexPath.row) ?? UITableViewCell()
             case Setting.MobileData.rawValue:
-                guard let cell = self.tableView.dequeueReusableCell(withIdentifier: "ViewLabelSelectionLabel") as? ViewLabelSelectionLabel else {return UITableViewCell()}
-                cell.lblSettingName.text = settingFeature.name
-                cell.coloredView.backgroundColor = .random
-                cell.lblSelectedChoice.isHidden = true
-                return cell
-            case Setting.Notifications.rawValue, "General", "Wallpaper", Setting.DisplayBrightness.rawValue, Setting.DoNotDisturb.rawValue:
+                return self.setupMobileDataCell(section: indexPath.section, row: indexPath.row) ?? UITableViewCell()
+            case Setting.Notifications.rawValue, Setting.General.rawValue, Setting.Wallpaper.rawValue, Setting.DisplayBrightness.rawValue, Setting.DoNotDisturb.rawValue:
                 guard let cell = self.tableView.dequeueReusableCell(withIdentifier: "ViewLabelSelectionLabel") as? ViewLabelSelectionLabel else {return UITableViewCell()}
                 cell.lblSettingName.text = settingFeature.name
                 cell.coloredView.backgroundColor = .random
@@ -143,41 +133,13 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
             case Section.NetworkSection.rawValue:
                 switch indexPath.row {
                 case NetworkSection.AirplaneMode.rawValue:
-                    guard let cell = self.tableView.dequeueReusableCell(withIdentifier: "ViewLabelSwitchCell") as? ViewLabelSwitchCell else {return UITableViewCell()}
-                    cell.lblSettingName.text = self.settingsOptionsArray[indexPath.section][indexPath.row]
-                    cell.mySwitch.setOn(self.settings.airplaneMode == "On" ? true : false, animated: true)
-                    cell.mySwitch.tag = NetworkSection.AirplaneMode.rawValue
-                    cell.mySwitch.addTarget(self, action: #selector(switchStateChanged(_:)), for: .valueChanged)
-                    return cell
+                    return self.setupAirplaneModeCell(section: indexPath.section, row: indexPath.row) ?? UITableViewCell()
                 case NetworkSection.WiFi.rawValue, NetworkSection.Blutooth.rawValue, NetworkSection.Carrier.rawValue:
-                    guard let cell = self.tableView.dequeueReusableCell(withIdentifier: "ViewLabelSelectionLabel") as? ViewLabelSelectionLabel else {return UITableViewCell()}
-                    cell.lblSelectedChoice.isHidden = false
-                    cell.lblSettingName.text = self.settingsOptionsArray[indexPath.section][indexPath.row]
-                    
-                    cell.coloredView.backgroundColor = .random
-                    if indexPath.row == self.settingsOptionsArray[indexPath.section].count-1 {
-                        cell.line.isHidden = true
-                    } else {
-                        cell.line.isHidden = false
-                    }
-                    if indexPath.row == NetworkSection.WiFi.rawValue {
-                        cell.lblSelectedChoice.text = self.settings.wiFi
-                    } else if indexPath.row == NetworkSection.Blutooth.rawValue {
-                        cell.lblSelectedChoice.text = self.settings.bluetooth
-                    } else {
-                        cell.lblSelectedChoice.text = self.settings.carrier
-                    }
-                    
-                    return cell
+                    return self.setupWiFiBlutoothCarrierCell(section: indexPath.section, row: indexPath.row) ?? UITableViewCell()
                 case NetworkSection.MobileData.rawValue:
-                    guard let cell = self.tableView.dequeueReusableCell(withIdentifier: "ViewLabelSelectionLabel") as? ViewLabelSelectionLabel else {return UITableViewCell()}
-                    cell.lblSettingName.text = self.settingsOptionsArray[indexPath.section][indexPath.row]
-                    cell.coloredView.backgroundColor = .random
-                    cell.lblSelectedChoice.isHidden = true
-                    return cell
+                    return self.setupMobileDataCell(section: indexPath.section, row: indexPath.row) ?? UITableViewCell()
                 default:
                     break
-                    
                 }
             case Section.Notifications.rawValue, Section.General.rawValue:
                 guard let cell = self.tableView.dequeueReusableCell(withIdentifier: "ViewLabelSelectionLabel") as? ViewLabelSelectionLabel else {return UITableViewCell()}
@@ -191,7 +153,6 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
             return UITableViewCell()
         }
         return UITableViewCell()
-        
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -201,80 +162,78 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
         if self.searchActive == true {
-            let settingFeature = self.filtered[indexPath.row]
-            switch settingFeature.name {
-            case Setting.WiFi.rawValue:
-                self.wiFiSettingAction()
-            case Setting.Carrier.rawValue:
-                self.carrierSettingAction()
-            case Setting.MobileData.rawValue:
-                self.mobileDataSettingAction()
-            case Setting.Blutooth.rawValue:
-                self.blutoothSettingAction()
-            case Setting.Notifications.rawValue:
-                self.notificationsSettingAction()
-            case Setting.DoNotDisturb.rawValue:
-                self.dndSettingAction()
-            case Setting.General.rawValue:
-                self.generalSettingAction()
-            case Setting.Wallpaper.rawValue:
-                self.wallpaperSettingAction()
-            case Setting.DisplayBrightness.rawValue:
-                self.displayBrightnessSettingAction()
-            default:
-                break
-            }
+            self.rowActionWhenSearchIsActive(section: indexPath.section, row: indexPath.row)
         } else { //When search is not active
-            switch indexPath.section {
-                case Section.NetworkSection.rawValue:
-                switch indexPath.row {
-                    case NetworkSection.WiFi.rawValue:
-                        self.wiFiSettingAction()
-                    case NetworkSection.Carrier.rawValue:
-                        self.carrierSettingAction()
-                    case NetworkSection.MobileData.rawValue:
-                        self.mobileDataSettingAction()
-                    case NetworkSection.Blutooth.rawValue:
-                        self.blutoothSettingAction()
-                    default:
-                        break
-                    }
-                case Section.Notifications.rawValue:
-                switch indexPath.row {
-                    case NotificationsSection.Notifications.rawValue:
-                        self.notificationsSettingAction()
-                    case NotificationsSection.DoNotDisturb.rawValue:
-                        self.dndSettingAction()
-                    default:
-                        break
-                }
-                case Section.General.rawValue:
-                    switch indexPath.row {
-                    case GeneralSection.General.rawValue:
-                        self.generalSettingAction()
-                    case GeneralSection.Wallpaper.rawValue:
-                        self.wallpaperSettingAction()
-                    case GeneralSection.DisplayBrightness.rawValue:
-                        self.displayBrightnessSettingAction()
-                    default:
-                        break
-                    }
-                default:
-                break
-            }
+            self.rowActionWhenSearchIsInactive(section: indexPath.section, row: indexPath.row)
         }
     }
     
+    // MARK: Cell setup methods
+    private func setupWiFiBlutoothCarrierCell(section: Int, row: Int) -> UITableViewCell? {
+        guard let cell = self.tableView.dequeueReusableCell(withIdentifier: "ViewLabelSelectionLabel") as? ViewLabelSelectionLabel else {return UITableViewCell()}
+        cell.lblSelectedChoice.isHidden = false
+        cell.coloredView.backgroundColor = .random
+        if self.searchActive {
+            let settingFeature = self.filtered[row]
+            cell.lblSettingName.text = settingFeature.name
+            if settingFeature.name == Setting.WiFi.rawValue {
+                cell.lblSelectedChoice.text = self.settings.wiFi
+            } else if settingFeature.name == Setting.Blutooth.rawValue {
+                cell.lblSelectedChoice.text = self.settings.bluetooth
+            } else if settingFeature.name == Setting.Carrier.rawValue {
+                cell.lblSelectedChoice.text = self.settings.carrier
+            }
+        } else {
+            cell.lblSettingName.text = self.settingsOptionsArray[section][row]
+            if row == NetworkSection.WiFi.rawValue {
+                cell.lblSelectedChoice.text = self.settings.wiFi
+            } else if row == NetworkSection.Blutooth.rawValue {
+                cell.lblSelectedChoice.text = self.settings.bluetooth
+            } else if row == NetworkSection.Carrier.rawValue {
+                cell.lblSelectedChoice.text = self.settings.carrier
+            }
+        }
+        return cell
+    }
+    
+    private func setupMobileDataCell(section: Int, row: Int) -> UITableViewCell? {
+        guard let cell = self.tableView.dequeueReusableCell(withIdentifier: "ViewLabelSelectionLabel") as? ViewLabelSelectionLabel else {return UITableViewCell()}
+        
+        cell.coloredView.backgroundColor = .random
+        cell.lblSelectedChoice.isHidden = true
+        if self.searchActive == true {
+            let settingFeature = self.filtered[row]
+            cell.lblSettingName.text = settingFeature.name
+        } else {
+            cell.lblSettingName.text = self.settingsOptionsArray[section][row]
+        }
+        return cell
+    }
+    
+    private func setupAirplaneModeCell(section: Int, row: Int) -> UITableViewCell? {
+        guard let cell = self.tableView.dequeueReusableCell(withIdentifier: "ViewLabelSwitchCell") as? ViewLabelSwitchCell else {return UITableViewCell()}
+        cell.mySwitch.setOn(self.settings.airplaneMode == "On" ? true : false, animated: true)
+        cell.mySwitch.tag = NetworkSection.AirplaneMode.rawValue
+        cell.mySwitch.addTarget(self, action: #selector(switchStateChanged(_:)), for: .valueChanged)
+        if self.searchActive {
+            let settingFeature = self.filtered[row]
+            cell.lblSettingName.text = settingFeature.name
+        } else {
+            cell.lblSettingName.text = self.settingsOptionsArray[section][row]
+        }
+        return cell
+    }
+    
     // MARK: Cell actions methods
-    func wiFiSettingAction() {
+    private func wiFiSettingAction() {
         if let vc = self.storyboard?.instantiateViewController(withIdentifier: "DropDownOptionsViewController") as? DropDownOptionsViewController {
             vc.delegate = self
             vc.displayDataType = DisplayDataType.listType
             vc.listItems = ["Network 1", "Network 2", "Network 3", "Network 4", "Network 5"]
             vc.currentSetting = Setting.WiFi.rawValue
             vc.navigationItem.title = Setting.WiFi.rawValue
+            // portrait of bigger and portrait & landcape mode of smaller devices
             if (self.splitViewController?.viewControllers.count)!<=1 {
                 self.navigationController?.pushViewController(vc, animated: true)
             } else {
@@ -284,13 +243,14 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
         }
     }
     
-    func carrierSettingAction() {
+    private func carrierSettingAction() {
         if let vc = self.storyboard?.instantiateViewController(withIdentifier: "DropDownOptionsViewController") as? DropDownOptionsViewController {
             vc.delegate = self
             vc.displayDataType = DisplayDataType.listType
             vc.listItems = ["Carrier 1", "Carrier 2", "Carrier 3", "Carrier 4", "Carrier 5"]
             vc.currentSetting = Setting.Carrier.rawValue
             vc.navigationItem.title = Setting.Carrier.rawValue
+            // portrait of bigger and portrait & landcape mode of smaller devices
             if (self.splitViewController?.viewControllers.count)!<=1 {
                 self.navigationController?.pushViewController(vc, animated: true)
             } else {
@@ -300,11 +260,12 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
         }
     }
     
-    func mobileDataSettingAction() {
+    private func mobileDataSettingAction() {
         if let vc = self.storyboard?.instantiateViewController(withIdentifier: "CellularSettingViewController") as? CellularSettingViewController {
             vc.delegate = self
             vc.currentSetting = Setting.MobileData.rawValue
             vc.navigationItem.title = Setting.MobileData.rawValue
+            // portrait of bigger and portrait & landcape mode of smaller devices
             if (self.splitViewController?.viewControllers.count)!<=1 {
                 self.navigationController?.pushViewController(vc, animated: true)
             } else {
@@ -314,12 +275,13 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
         }
     }
     
-    func blutoothSettingAction() {
+    private func blutoothSettingAction() {
         if let vc = self.storyboard?.instantiateViewController(withIdentifier: "DropDownOptionsViewController") as? DropDownOptionsViewController {
             vc.delegate = self
             vc.displayDataType = DisplayDataType.switchType
             vc.currentSetting = Setting.Blutooth.rawValue
             vc.navigationItem.title = Setting.Blutooth.rawValue
+            // portrait of bigger and portrait & landcape mode of smaller devices
             if (self.splitViewController?.viewControllers.count)!<=1 {
                 self.navigationController?.pushViewController(vc, animated: true)
             } else {
@@ -329,12 +291,13 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
         }
     }
     
-    func notificationsSettingAction() {
+    private func notificationsSettingAction() {
         if let vc = self.storyboard?.instantiateViewController(withIdentifier: "DropDownOptionsViewController") as? DropDownOptionsViewController {
             vc.delegate = self
             vc.displayDataType = DisplayDataType.switchType
             vc.currentSetting = Setting.Notifications.rawValue
             vc.navigationItem.title = Setting.Notifications.rawValue
+            // portrait of bigger and portrait & landcape mode of smaller devices
             if (self.splitViewController?.viewControllers.count)!<=1 {
                 self.navigationController?.pushViewController(vc, animated: true)
             } else {
@@ -344,11 +307,12 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
         }
     }
     
-    func dndSettingAction() {
+    private func dndSettingAction() {
         if let vc = self.storyboard?.instantiateViewController(withIdentifier: "DNDViewController") as? DNDViewController {
             vc.delegate = self
             vc.currentSetting = Setting.DoNotDisturb.rawValue
             vc.navigationItem.title = Setting.DoNotDisturb.rawValue
+            // portrait of bigger and portrait & landcape mode of smaller devices
             if (self.splitViewController?.viewControllers.count)!<=1 {
                 self.navigationController?.pushViewController(vc, animated: true)
             } else {
@@ -358,10 +322,11 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
         }
     }
     
-    func generalSettingAction() {
+    private func generalSettingAction() {
         if let vc = self.storyboard?.instantiateViewController(withIdentifier: "SimpleTextViewController") as? SimpleTextViewController {
             vc.descriptionText = "General Screen"
             vc.navigationItem.title = Setting.General.rawValue
+            // portrait of bigger and portrait & landcape mode of smaller devices
             if (self.splitViewController?.viewControllers.count)!<=1 {
                 self.navigationController?.pushViewController(vc, animated: true)
             } else {
@@ -371,10 +336,11 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
         }
     }
     
-    func wallpaperSettingAction() {
+    private func wallpaperSettingAction() {
         if let vc = self.storyboard?.instantiateViewController(withIdentifier: "SimpleTextViewController") as? SimpleTextViewController {
             vc.descriptionText = "Wallpaper Screen"
             vc.navigationItem.title = Setting.Wallpaper.rawValue
+            // portrait of bigger and portrait & landcape mode of smaller devices
             if (self.splitViewController?.viewControllers.count)!<=1 {
                 self.navigationController?.pushViewController(vc, animated: true)
             } else {
@@ -384,9 +350,10 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
         }
     }
     
-    func displayBrightnessSettingAction() {
+    private func displayBrightnessSettingAction() {
         if let vc = self.storyboard?.instantiateViewController(withIdentifier: "DisplayBrightnessViewController") as? DisplayBrightnessViewController {
             vc.navigationItem.title = Setting.DisplayBrightness.rawValue
+            // portrait of bigger and portrait & landcape mode of smaller devices
             if (self.splitViewController?.viewControllers.count)!<=1 {
                 self.navigationController?.pushViewController(vc, animated: true)
             } else {
@@ -396,13 +363,81 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
         }
     }
     
-    @objc func switchStateChanged(_ mySwitch: UISwitch) {
-        if mySwitch.tag == NetworkSection.AirplaneMode.rawValue {
-            if mySwitch.isOn {
-                Settings.shared.airplaneMode = "On"
-            } else {
-                Settings.shared.airplaneMode = "Off"
-            }
+    private func rowActionWhenSearchIsActive(section: Int, row: Int) {
+        let settingFeature = self.filtered[row]
+        switch settingFeature.name {
+        case Setting.WiFi.rawValue:
+            self.wiFiSettingAction()
+        case Setting.Carrier.rawValue:
+            self.carrierSettingAction()
+        case Setting.MobileData.rawValue:
+            self.mobileDataSettingAction()
+        case Setting.Blutooth.rawValue:
+            self.blutoothSettingAction()
+        case Setting.Notifications.rawValue:
+            self.notificationsSettingAction()
+        case Setting.DoNotDisturb.rawValue:
+            self.dndSettingAction()
+        case Setting.General.rawValue:
+            self.generalSettingAction()
+        case Setting.Wallpaper.rawValue:
+            self.wallpaperSettingAction()
+        case Setting.DisplayBrightness.rawValue:
+            self.displayBrightnessSettingAction()
+        default:
+            break
+        }
+    }
+    
+    private func rowActionWhenSearchIsInactive(section: Int, row: Int) {
+        switch section {
+        case Section.NetworkSection.rawValue:
+            self.networkSectionActionWhenSearchIsInactive(row: row)
+        case Section.Notifications.rawValue:
+            self.notificationsSectionActionWhenSearchIsInactive(row: row)
+        case Section.General.rawValue:
+            self.generalSectionActionWhenSearchIsInActive(row: row)
+        default:
+            break
+        }
+    }
+    
+    private func networkSectionActionWhenSearchIsInactive(row: Int) {
+        switch row {
+        case NetworkSection.WiFi.rawValue:
+            self.wiFiSettingAction()
+        case NetworkSection.Carrier.rawValue:
+            self.carrierSettingAction()
+        case NetworkSection.MobileData.rawValue:
+            self.mobileDataSettingAction()
+        case NetworkSection.Blutooth.rawValue:
+            self.blutoothSettingAction()
+        default:
+            break
+        }
+    }
+    
+    private func notificationsSectionActionWhenSearchIsInactive(row: Int) {
+        switch row {
+        case NotificationsSection.Notifications.rawValue:
+            self.notificationsSettingAction()
+        case NotificationsSection.DoNotDisturb.rawValue:
+            self.dndSettingAction()
+        default:
+            break
+        }
+    }
+    
+    private func generalSectionActionWhenSearchIsInActive(row: Int) {
+        switch row {
+        case GeneralSection.General.rawValue:
+            self.generalSettingAction()
+        case GeneralSection.Wallpaper.rawValue:
+            self.wallpaperSettingAction()
+        case GeneralSection.DisplayBrightness.rawValue:
+            self.displayBrightnessSettingAction()
+        default:
+            break
         }
     }
 }
@@ -439,7 +474,6 @@ extension SettingsViewController: UISearchBarDelegate {
 
 // MARK: Protocol conformation
 extension SettingsViewController: SelectedDataSendProtocol {
-    
     func sendSelectedOption(settingName: String, selectedOption: String) {
         switch settingName {
         case Setting.AirplaneMode.rawValue:

@@ -14,15 +14,25 @@ protocol SelectedDataSendProtocol {
 
 class DropDownOptionsViewController: UIViewController {
     
-    var delegate: SettingsViewController?
+    weak var delegate: SettingsViewController?
+    weak var detailVCDelegate: DisplayBrightnessViewController?
     var displayDataType: DisplayDataType?
     var listItems: [String]?
     var currentSetting: String?
-    var selectedOption: String?
-    let standaloneItem = UINavigationItem()
-    let navigationBar = UINavigationBar()
+    private var selectedOption: String?
     
-    @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak private var tableView: UITableView!
+    
+    @objc func switchStateChanged(_ mySwitch: UISwitch) {
+        if mySwitch.isOn {
+            self.selectedOption = "On"
+        } else {
+            self.selectedOption = "Off"
+        }
+        if let currentSetting = self.currentSetting, let selectedOption = self.selectedOption {
+            self.delegate?.sendSelectedOption(settingName: currentSetting, selectedOption: selectedOption)
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,7 +41,6 @@ class DropDownOptionsViewController: UIViewController {
 }
 
 extension DropDownOptionsViewController: UITableViewDataSource, UITableViewDelegate {
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if self.displayDataType == DisplayDataType.switchType {
             return 1
@@ -69,11 +78,12 @@ extension DropDownOptionsViewController: UITableViewDataSource, UITableViewDeleg
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         self.selectedOption = listItems?[indexPath.row]
-//        let cell = self.tableView.cellForRow(at: indexPath)
-//        cell!.accessoryType = .checkmark
         if let currentSetting = self.currentSetting, let selectedOption = self.selectedOption {
-            self.delegate?.sendSelectedOption(settingName: currentSetting, selectedOption: selectedOption)
-//            self.navigationController?.popViewController(animated: true)
+            if (self.navigationController?.viewControllers.count)! >= 2 &&  (self.navigationController?.viewControllers[(navigationController?.viewControllers.count)! - 2] as? DisplayBrightnessViewController) != nil {
+                self.detailVCDelegate?.sendSelectedOption(settingName: currentSetting, selectedOption: selectedOption)
+            } else {
+                self.delegate?.sendSelectedOption(settingName: currentSetting, selectedOption: selectedOption)
+            }
         }
     }
     
@@ -86,39 +96,4 @@ extension DropDownOptionsViewController: UITableViewDataSource, UITableViewDeleg
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 45
     }
-    
-    @objc func switchStateChanged(_ mySwitch: UISwitch) {
-        if mySwitch.isOn {
-            self.selectedOption = "On"
-        } else {
-            self.selectedOption = "Off"
-        }
-        if let currentSetting = self.currentSetting, let selectedOption = self.selectedOption {
-            self.delegate?.sendSelectedOption(settingName: currentSetting, selectedOption: selectedOption)
-        }
-    }
-    
 }
-//func placeNavigationBar(){
-//
-//    let item = UINavigationItem()
-//    let headerView = UILabel()
-//    item.titleView = headerView
-//    item.title = "Genkalfkdlkf"
-//    let navigationBar = UINavigationBar()
-//    navigationBar.isTranslucent = true
-//    navigationBar.tintColor = #colorLiteral(red: 1, green: 0.99997437, blue: 0.9999912977, alpha: 1)
-//    navigationBar.barStyle = .black
-//    navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
-//
-//    navigationBar.heightAnchor.constraint(equalToConstant: 55)
-//
-//    view.addSubview(navigationBar)
-//    navigationBar.translatesAutoresizingMaskIntoConstraints = false
-//    navigationBar.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-//    navigationBar.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-//    navigationBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
-//    navigationBar.bottomAnchor.constraint(equalTo: self.tableView.topAnchor).isActive = true
-//
-//    navigationBar.items = [item]
-//}

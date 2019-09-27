@@ -10,7 +10,7 @@ import UIKit
 
 class SimpleTextViewController: UIViewController {
 
-    @IBOutlet weak var lblDescription: UILabel!
+    @IBOutlet weak private var lblDescription: UILabel!
     var descriptionText: String?
     
     override func viewDidLoad() {

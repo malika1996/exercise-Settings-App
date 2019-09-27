@@ -10,17 +10,24 @@ import UIKit
 
 class CellularSettingViewController: UIViewController {
     
-    var cellularSettingsOptionsArray = [
+    weak var delegate: SettingsViewController?
+    private var cellularSettingsOptionsArray = [
         ["Cellular Data", "Cellular Data Options"],
         []
     ]
-    var delegate: SettingsViewController?
-    
-    var headerViewTitle = ["","Turn off cellular data to restrict all data to Wi-Fi, including email, web browsing, and push notifications"]
+    private var headerViewTitle = ["","Turn off cellular data to restrict all data to Wi-Fi, including email, web browsing, and push notifications"]
     var currentSetting: String?
-    var selectedOption: String?
+    private var selectedOption: String?
 
-    @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak private var tableView: UITableView!
+    
+    @objc func switchStateChanged(_ mySwitch: UISwitch) {
+        if mySwitch.isOn {
+            self.selectedOption = "On"
+        } else {
+            self.selectedOption = "Off"
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,7 +44,6 @@ class CellularSettingViewController: UIViewController {
 }
 
 extension CellularSettingViewController: UITableViewDelegate, UITableViewDataSource {
-    
     func numberOfSections(in tableView: UITableView) -> Int {
         return 2
     }
@@ -46,7 +52,7 @@ extension CellularSettingViewController: UITableViewDelegate, UITableViewDataSou
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.row == 0 {
+        if indexPath.row == 0 { //Cellular data switch cell
             guard let cell = self.tableView.dequeueReusableCell(withIdentifier: "ViewLabelSwitchCell") as? ViewLabelSwitchCell else {return UITableViewCell()}
             cell.mySwitch.addTarget(self, action: #selector(switchStateChanged(_:)), for: .valueChanged)
             cell.mySwitch.setOn(Settings.shared.mobileData == "On" ? true : false, animated: true)
@@ -93,14 +99,6 @@ extension CellularSettingViewController: UITableViewDelegate, UITableViewDataSou
             return 45
         } else {
             return 100
-        }
-    }
-    
-    @objc func switchStateChanged(_ mySwitch: UISwitch) {
-        if mySwitch.isOn {
-            self.selectedOption = "On"
-        } else {
-            self.selectedOption = "Off"
         }
     }
 }

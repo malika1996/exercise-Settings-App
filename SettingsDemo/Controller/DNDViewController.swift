@@ -10,16 +10,24 @@ import UIKit
 
 class DNDViewController: UIViewController {
     
-    var delegate: SettingsViewController?
-    var dndSettingsOptionsArray = [
+    weak var delegate: SettingsViewController?
+    private var dndSettingsOptionsArray = [
         ["Do Not Disturb"],
         []
     ]
-    var headerViewTitle = ["","When Do Not Disturb is enabled, calls and alerts that arrive while locked will be silenced, and a moon icon will appear on the status bar."]
+    private var headerViewTitle = ["","When Do Not Disturb is enabled, calls and alerts that arrive while locked will be silenced, and a moon icon will appear on the status bar."]
     var currentSetting: String?
-    var selectedOption: String?
+    private var selectedOption: String?
 
-    @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak private var tableView: UITableView!
+    
+    @objc func switchStateChanged(_ mySwitch: UISwitch) {
+        if mySwitch.isOn {
+            self.selectedOption = "On"
+        } else {
+            self.selectedOption = "Off"
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,7 +43,6 @@ class DNDViewController: UIViewController {
 }
 
 extension DNDViewController: UITableViewDelegate, UITableViewDataSource {
-    
     func numberOfSections(in tableView: UITableView) -> Int {
         return self.dndSettingsOptionsArray.count
     }
@@ -73,13 +80,5 @@ extension DNDViewController: UITableViewDelegate, UITableViewDataSource {
         } else {
             return 100
         }
-    }
-    
-    @objc func switchStateChanged(_ mySwitch: UISwitch) {
-        if mySwitch.isOn {
-            self.selectedOption = "On"
-        } else {
-            self.selectedOption = "Off"
-        }
-    }
+    }    
 }
