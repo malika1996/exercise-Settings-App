@@ -54,7 +54,7 @@ extension DNDViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = self.tableView.dequeueReusableCell(withIdentifier: "ViewLabelSwitchCell") as? ViewLabelSwitchCell else {return UITableViewCell()}
         cell.mySwitch.addTarget(self, action: #selector(switchStateChanged(_:)), for: .valueChanged)
-        cell.mySwitch.setOn(Settings.shared.dnd == "On" ? true : false, animated: true)
+        cell.mySwitch.setOn(CoreDataManager.settings[Setting.DoNotDisturb.rawValue] == "On" ? true : false, animated: true)
         cell.coloredView.isHidden = true
         cell.leadingConstraintOfLblSettingName.constant = 20
         cell.leadingConstraintOfLine.constant = 18

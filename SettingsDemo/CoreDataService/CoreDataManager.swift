@@ -11,28 +11,36 @@ import UIKit
 import CoreData
 
 class CoreDataManager {
-    
-    private init() {}
-    
     static var coreDataManager = CoreDataManager()
-    
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     let settingEntityName = "Settings"
     lazy var context = appDelegate.persistentContainer.viewContext
     
-    func saveDataToDisk() {
+    static var settings: [String: String] = [:]
+    
+    private init() {
+        CoreDataManager.settings = [
+            Setting.AirplaneMode.rawValue : "",
+            Setting.WiFi.rawValue: "",
+            Setting.Blutooth.rawValue : "",
+            Setting.MobileData.rawValue: "",
+            Setting.Carrier.rawValue: "",
+            Setting.Notifications.rawValue: "",
+            Setting.DoNotDisturb.rawValue: ""
+        ]
+    }
         
+    func saveDataToDisk() {
         let entity = NSEntityDescription.entity(forEntityName: self.settingEntityName, in: context)
         let setting = NSManagedObject(entity: entity!, insertInto: context)
         
-        setting.setValue(Settings.shared.airplaneMode, forKey: "airplaneMode")
-        setting.setValue(Settings.shared.wiFi, forKey: "wiFi")
-        setting.setValue(Settings.shared.bluetooth, forKey: "bluetooth")
-        setting.setValue(Settings.shared.mobileData, forKey: "mobileData")
-        setting.setValue(Settings.shared.carrier, forKey: "carrier")
-        setting.setValue(Settings.shared.notifications, forKey: "notifications")
-        setting.setValue(Settings.shared.dnd, forKey: "dnd")
-
+        setting.setValue(CoreDataManager.settings[Setting.AirplaneMode.rawValue], forKey: "airplaneMode")
+        setting.setValue(CoreDataManager.settings[Setting.WiFi.rawValue], forKey: "wiFi")
+        setting.setValue(CoreDataManager.settings[Setting.Blutooth.rawValue], forKey: "bluetooth")
+        setting.setValue(CoreDataManager.settings[Setting.MobileData.rawValue], forKey: "mobileData")
+        setting.setValue(CoreDataManager.settings[Setting.Carrier.rawValue], forKey: "carrier")
+        setting.setValue(CoreDataManager.settings[Setting.Notifications.rawValue], forKey: "notifications")
+        setting.setValue(CoreDataManager.settings[Setting.DoNotDisturb.rawValue], forKey: "dnd")
         do {
             try context.save()
         } catch {
@@ -46,25 +54,25 @@ class CoreDataManager {
             let result = try context.fetch(request)
             for settings in result as! [NSManagedObject] {
                 if let airplaneMode = settings.value(forKey: "airplaneMode") as? String {
-                    Settings.shared.airplaneMode = airplaneMode
+                    CoreDataManager.settings[Setting.AirplaneMode.rawValue] = airplaneMode
                 }
                 if let wiFi = settings.value(forKey: "wiFi") as? String {
-                    Settings.shared.wiFi = wiFi
+                    CoreDataManager.settings[Setting.WiFi.rawValue] = wiFi
                 }
                 if let bluetooth = settings.value(forKey: "bluetooth") as? String {
-                    Settings.shared.bluetooth = bluetooth
+                    CoreDataManager.settings[Setting.Blutooth.rawValue] = bluetooth
                 }
                 if let mobileData = settings.value(forKey: "mobileData") as? String {
-                    Settings.shared.mobileData = mobileData
+                    CoreDataManager.settings[Setting.MobileData.rawValue] = mobileData
                 }
                 if let carrier = settings.value(forKey: "carrier") as? String {
-                    Settings.shared.carrier = carrier
+                    CoreDataManager.settings[Setting.Carrier.rawValue] = carrier
                 }
                 if let notifications = settings.value(forKey: "notifications") as? String {
-                    Settings.shared.notifications = notifications
+                    CoreDataManager.settings[Setting.Notifications.rawValue] = notifications
                 }
                 if let dnd = settings.value(forKey: "dnd") as? String {
-                    Settings.shared.dnd = dnd
+                    CoreDataManager.settings[Setting.DoNotDisturb.rawValue] = dnd
                 }
             }
         } catch {

@@ -18,11 +18,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         CoreDataManager.coreDataManager.fetchDataFromDisk()
-        guard let splitViewController = window?.rootViewController as? UISplitViewController,
-            let leftNavController = splitViewController.viewControllers.first as? UINavigationController,
-            let masterViewController = leftNavController.topViewController as? SettingsViewController,
-            let detailViewController = splitViewController.viewControllers.last as? UINavigationController
-            else { fatalError() }
         return true
     }
 
@@ -34,6 +29,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidEnterBackground(_ application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+        CoreDataManager.coreDataManager.saveDataToDisk()
+        self.saveContext()
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
@@ -46,8 +43,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-        CoreDataManager.coreDataManager.saveDataToDisk()
-        self.saveContext()
     }
     
     // MARK: - Core Data stack

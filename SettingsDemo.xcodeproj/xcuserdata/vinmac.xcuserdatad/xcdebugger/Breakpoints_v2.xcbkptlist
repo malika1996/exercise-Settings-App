@@ -122,23 +122,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "9E2878B2-0E50-4549-BA54-417A3A54D0B8"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SettingsDemo/AppDelegate.swift"
-            timestampString = "591280513.895878"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "24"
-            endingLineNumber = "24"
-            landmarkName = "application(_:didFinishLaunchingWithOptions:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "63116A23-13E3-4D1B-92C5-8F5B6B9E53A2"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -171,101 +154,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "DEA848AB-F6C2-46F4-9E07-FC6720CE894E"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SettingsDemo/Controller/SettingsViewController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "181"
-            endingLineNumber = "181"
-            landmarkName = "tableView(_:didSelectRowAt:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "0360019E-45C9-464B-A347-F4A0E368E066"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SettingsDemo/Controller/SettingsViewController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "183"
-            endingLineNumber = "183"
-            landmarkName = "tableView(_:didSelectRowAt:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "1A41C371-B073-4B3E-BFA7-FD2D9CAB3C63"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SettingsDemo/Controller/SettingsViewController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "412"
-            endingLineNumber = "412"
-            landmarkName = "rowActionWhenSearchIsInactive(section:row:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "1A41C371-B073-4B3E-BFA7-FD2D9CAB3C63 - b7c7541d14c3519b"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "SettingsDemo.SettingsViewController.(rowActionWhenSearchIsInactive in _9DDDD6595BFD19EB2FD69633D6FA352E)(section: Swift.Int, row: Swift.Int) -&gt; ()"
-                  moduleName = "SettingsDemo"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/vinmac/Documents/SettingsDemo/SettingsDemo/Controller/SettingsViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "412"
-                  endingLineNumber = "412"
-                  offsetFromSymbolStart = "144">
-               </Location>
-               <Location
-                  uuid = "1A41C371-B073-4B3E-BFA7-FD2D9CAB3C63 - b7c7541d14c3519b"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "SettingsDemo.SettingsViewController.(rowActionWhenSearchIsInactive in _9DDDD6595BFD19EB2FD69633D6FA352E)(section: Swift.Int, row: Swift.Int) -&gt; ()"
-                  moduleName = "SettingsDemo"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/vinmac/Documents/SettingsDemo/SettingsDemo/Controller/SettingsViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "412"
-                  endingLineNumber = "412"
-                  offsetFromSymbolStart = "180">
-               </Location>
-               <Location
-                  uuid = "1A41C371-B073-4B3E-BFA7-FD2D9CAB3C63 - b7c7541d14c3519b"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "SettingsDemo.SettingsViewController.(rowActionWhenSearchIsInactive in _9DDDD6595BFD19EB2FD69633D6FA352E)(section: Swift.Int, row: Swift.Int) -&gt; ()"
-                  moduleName = "SettingsDemo"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/vinmac/Documents/SettingsDemo/SettingsDemo/Controller/SettingsViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "412"
-                  endingLineNumber = "412"
-                  offsetFromSymbolStart = "220">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "7C138007-2274-46CB-A462-51AC5018D2FF"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
@@ -292,6 +180,118 @@
             startingLineNumber = "479"
             endingLineNumber = "479"
             landmarkName = "searchBar(_:textDidChange:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "56FEDAE5-AE00-4DD0-A7BA-7B5E07FA01D0"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SettingsDemo/CoreDataService/CoreDataManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "56"
+            endingLineNumber = "56"
+            landmarkName = "fetchDataFromDisk()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "350F61B6-182C-4A1E-A7D0-BBE2DA2021AC"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SettingsDemo/Controller/DNDViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "57"
+            endingLineNumber = "57"
+            landmarkName = "tableView(_:cellForRowAt:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "1CFE7214-8C92-4B67-8BE1-B53118E03EBB"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SettingsDemo/CoreDataService/CoreDataManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "46"
+            endingLineNumber = "46"
+            landmarkName = "saveDataToDisk()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "0B0E90B4-D4C4-4323-AFB2-73ADD1EDA484"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SettingsDemo/CoreDataService/CoreDataManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "48"
+            endingLineNumber = "48"
+            landmarkName = "saveDataToDisk()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "73C528E6-9C7B-4608-A3AE-0650D57D151D"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SettingsDemo/Controller/SettingsViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "499"
+            endingLineNumber = "499"
+            landmarkName = "sendSelectedOption(settingName:selectedOption:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "570CF057-6C04-4A9D-878E-05583B30FD32"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SettingsDemo/AppDelegate.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "20"
+            endingLineNumber = "20"
+            landmarkName = "application(_:didFinishLaunchingWithOptions:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "425DB9C7-0EE5-438F-920E-130583A150A1"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SettingsDemo/CoreDataService/CoreDataManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "62"
+            endingLineNumber = "62"
+            landmarkName = "fetchDataFromDisk()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

@@ -14,6 +14,5 @@ class SplitViewController: UISplitViewController, UISplitViewControllerDelegate 
         super.viewDidLoad()
         self.delegate = self
         self.preferredDisplayMode = .allVisible
-
     }
 }

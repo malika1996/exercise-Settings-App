@@ -60,9 +60,9 @@ extension DropDownOptionsViewController: UITableViewDataSource, UITableViewDeleg
             
             switch self.currentSetting! {
             case Setting.Blutooth.rawValue:
-                cell.mySwitch.setOn(Settings.shared.bluetooth == "On" ? true : false, animated: true)
+                cell.mySwitch.setOn(CoreDataManager.settings[Setting.Blutooth.rawValue] == "On" ? true : false, animated: true)
             case Setting.Notifications.rawValue:
-                cell.mySwitch.setOn(Settings.shared.notifications == "On" ? true : false, animated: true)
+                cell.mySwitch.setOn(CoreDataManager.settings[Setting.Notifications.rawValue] == "On" ? true : false, animated: true)
             default:
                 break
             }

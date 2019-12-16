@@ -55,7 +55,7 @@ extension CellularSettingViewController: UITableViewDelegate, UITableViewDataSou
         if indexPath.row == 0 { //Cellular data switch cell
             guard let cell = self.tableView.dequeueReusableCell(withIdentifier: "ViewLabelSwitchCell") as? ViewLabelSwitchCell else {return UITableViewCell()}
             cell.mySwitch.addTarget(self, action: #selector(switchStateChanged(_:)), for: .valueChanged)
-            cell.mySwitch.setOn(Settings.shared.mobileData == "On" ? true : false, animated: true)
+            cell.mySwitch.setOn(CoreDataManager.settings[Setting.MobileData.rawValue] == "On" ? true : false, animated: true)
             cell.coloredView.isHidden = true
             cell.leadingConstraintOfLblSettingName.constant = 20
             cell.leadingConstraintOfLine.constant = 18
@@ -73,12 +73,14 @@ extension CellularSettingViewController: UITableViewDelegate, UITableViewDataSou
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if let vc = self.storyboard?.instantiateViewController(withIdentifier: "DropDownOptionsViewController") as? DropDownOptionsViewController {
-            vc.displayDataType = DisplayDataType.listType
-            vc.listItems = ["Roaming On", "Roaming Off"]
-            vc.currentSetting = "Cellular Data Options"
-            vc.navigationItem.title = "Cellular Data Options"
-            self.navigationController?.pushViewController(vc, animated: true)
+        if indexPath.row == 1 {
+            if let vc = self.storyboard?.instantiateViewController(withIdentifier: "DropDownOptionsViewController") as? DropDownOptionsViewController {
+                vc.displayDataType = DisplayDataType.listType
+                vc.listItems = ["Roaming On", "Roaming Off"]
+                vc.currentSetting = "Cellular Data Options"
+                vc.navigationItem.title = "Cellular Data Options"
+                self.navigationController?.pushViewController(vc, animated: true)
+            }
         }
     }
     

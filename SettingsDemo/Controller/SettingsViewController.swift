@@ -46,11 +46,10 @@ class SettingsViewController: UIViewController {
         ["Notifications", "Do Not Disturb"],
         ["General", "Wallpaper", "Display & Brightness"]
     ]
-    private var data = [SettingFeature]()
-    private var filtered:[SettingFeature] = []
-    private var settings = Settings.shared
+    private var settingsDataArray = [SettingFeature]()
+    private var filteredSettingsArray:[SettingFeature] = []
+//    private var settings = CoreDataManager.settings
     private var searchActive: Bool = false
-    private var searchText = ""
 
     // MARK: Private IBOutlets
     @IBOutlet private weak var tableView: UITableView!
@@ -60,9 +59,9 @@ class SettingsViewController: UIViewController {
     @objc func switchStateChanged(_ mySwitch: UISwitch) {
         if mySwitch.tag == NetworkSection.AirplaneMode.rawValue {
             if mySwitch.isOn {
-                Settings.shared.airplaneMode = "On"
+                CoreDataManager.settings[Setting.AirplaneMode.rawValue] = "On"
             } else {
-                Settings.shared.airplaneMode = "Off"
+                CoreDataManager.settings[Setting.AirplaneMode.rawValue] = "Off"
             }
         }
     }
@@ -89,7 +88,7 @@ class SettingsViewController: UIViewController {
         let settingFeature9 = SettingFeature(name: "Wallpaper", value: "")
         let settingFeature10 = SettingFeature(name: "Display & Brightness", value: "")
         
-        self.data = [settingFeature1, settingFeature2, settingFeature3, settingFeature4, settingFeature5, settingFeature6, settingFeature7, settingFeature8, settingFeature9, settingFeature10]
+        self.settingsDataArray = [settingFeature1, settingFeature2, settingFeature3, settingFeature4, settingFeature5, settingFeature6, settingFeature7, settingFeature8, settingFeature9, settingFeature10]
     }
 }
 
@@ -104,14 +103,14 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if self.searchActive == true {
-            return self.filtered.count
+            return self.filteredSettingsArray.count
         }
         return self.settingsOptionsArray[section].count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if self.searchActive == true {
-            let settingFeature = self.filtered[indexPath.row]
+            let settingFeature = self.filteredSettingsArray[indexPath.row]
             switch settingFeature.name {
             case Setting.AirplaneMode.rawValue:
                 return self.setupAirplaneModeCell(section: indexPath.section, row: indexPath.row) ?? UITableViewCell()
@@ -177,7 +176,7 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if self.searchActive == true {
+        if self.searchActive {
             self.rowActionWhenSearchIsActive(section: indexPath.section, row: indexPath.row)
         } else { //When search is not active
             self.rowActionWhenSearchIsInactive(section: indexPath.section, row: indexPath.row)
@@ -194,23 +193,23 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
         cell.lblSelectedChoice.isHidden = false
         cell.coloredView.backgroundColor = .random
         if self.searchActive {
-            let settingFeature = self.filtered[row]
+            let settingFeature = self.filteredSettingsArray[row]
             cell.lblSettingName.text = settingFeature.name
             if settingFeature.name == Setting.WiFi.rawValue {
-                cell.lblSelectedChoice.text = self.settings.wiFi
+                cell.lblSelectedChoice.text = CoreDataManager.settings[Setting.WiFi.rawValue]
             } else if settingFeature.name == Setting.Blutooth.rawValue {
-                cell.lblSelectedChoice.text = self.settings.bluetooth
+                cell.lblSelectedChoice.text = CoreDataManager.settings[Setting.Blutooth.rawValue]
             } else if settingFeature.name == Setting.Carrier.rawValue {
-                cell.lblSelectedChoice.text = self.settings.carrier
+                cell.lblSelectedChoice.text = CoreDataManager.settings[Setting.Carrier.rawValue]
             }
         } else {
             cell.lblSettingName.text = self.settingsOptionsArray[section][row]
             if row == NetworkSection.WiFi.rawValue {
-                cell.lblSelectedChoice.text = self.settings.wiFi
+                cell.lblSelectedChoice.text = CoreDataManager.settings[Setting.WiFi.rawValue]
             } else if row == NetworkSection.Blutooth.rawValue {
-                cell.lblSelectedChoice.text = self.settings.bluetooth
+                cell.lblSelectedChoice.text = CoreDataManager.settings[Setting.Blutooth.rawValue]
             } else if row == NetworkSection.Carrier.rawValue {
-                cell.lblSelectedChoice.text = self.settings.carrier
+                cell.lblSelectedChoice.text = CoreDataManager.settings[Setting.Carrier.rawValue]
             }
         }
         return cell
@@ -222,7 +221,7 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
         cell.coloredView.backgroundColor = .random
         cell.lblSelectedChoice.isHidden = true
         if self.searchActive == true {
-            let settingFeature = self.filtered[row]
+            let settingFeature = self.filteredSettingsArray[row]
             cell.lblSettingName.text = settingFeature.name
         } else {
             cell.lblSettingName.text = self.settingsOptionsArray[section][row]
@@ -232,11 +231,11 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
     
     private func setupAirplaneModeCell(section: Int, row: Int) -> UITableViewCell? {
         guard let cell = self.tableView.dequeueReusableCell(withIdentifier: "ViewLabelSwitchCell") as? ViewLabelSwitchCell else {return UITableViewCell()}
-        cell.mySwitch.setOn(self.settings.airplaneMode == "On" ? true : false, animated: true)
+        cell.mySwitch.setOn(CoreDataManager.settings[Setting.AirplaneMode.rawValue] == "On" ? true : false, animated: true)
         cell.mySwitch.tag = NetworkSection.AirplaneMode.rawValue
         cell.mySwitch.addTarget(self, action: #selector(switchStateChanged(_:)), for: .valueChanged)
         if self.searchActive {
-            let settingFeature = self.filtered[row]
+            let settingFeature = self.filteredSettingsArray[row]
             cell.lblSettingName.text = settingFeature.name
         } else {
             cell.lblSettingName.text = self.settingsOptionsArray[section][row]
@@ -383,7 +382,7 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     private func rowActionWhenSearchIsActive(section: Int, row: Int) {
-        let settingFeature = self.filtered[row]
+        let settingFeature = self.filteredSettingsArray[row]
         switch settingFeature.name {
         case Setting.WiFi.rawValue:
             self.wiFiSettingAction()
@@ -471,23 +470,22 @@ extension SettingsViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchText == "" {
             self.searchActive = false
-            self.filtered = []
+            self.filteredSettingsArray = []
             self.tableView.reloadData()
         } else {
-            var filteredDataSource : [SettingFeature] = []
+            var filteredSettingsArrayDataSource : [SettingFeature] = []
             searchActive = false
-            for settingFeature in data {
+            for settingFeature in self.settingsDataArray {
                 if let searchText = self.searchBar.text {
                     if settingFeature.name.lowercased().prefix(searchText.count) == searchText.lowercased() {
                         searchActive = true
-                        filteredDataSource.append(settingFeature)
+                        filteredSettingsArrayDataSource.append(settingFeature)
                     }
                 }
             }
-            self.filtered = filteredDataSource
+            self.filteredSettingsArray = filteredSettingsArrayDataSource
             self.tableView.reloadData()
         }
-        self.searchText = searchText
     }
 }
 
@@ -496,19 +494,19 @@ extension SettingsViewController: SelectedDataSendProtocol {
     func sendSelectedOption(settingName: String, selectedOption: String) {
         switch settingName {
         case Setting.AirplaneMode.rawValue:
-            self.settings.airplaneMode = selectedOption
+            CoreDataManager.settings[Setting.AirplaneMode.rawValue] = selectedOption
         case Setting.WiFi.rawValue:
-            self.settings.wiFi = selectedOption
+            CoreDataManager.settings[Setting.WiFi.rawValue] = selectedOption
         case Setting.Blutooth.rawValue:
-            self.settings.bluetooth = selectedOption
+            CoreDataManager.settings[Setting.Blutooth.rawValue] = selectedOption
         case Setting.MobileData.rawValue:
-            self.settings.mobileData = selectedOption
+            CoreDataManager.settings[Setting.MobileData.rawValue] = selectedOption
         case Setting.Carrier.rawValue:
-            self.settings.carrier = selectedOption
+            CoreDataManager.settings[Setting.Carrier.rawValue] = selectedOption
         case Setting.Notifications.rawValue:
-            self.settings.notifications = selectedOption
+            CoreDataManager.settings[Setting.Notifications.rawValue] = selectedOption
         case Setting.DoNotDisturb.rawValue:
-            self.settings.dnd = selectedOption
+            CoreDataManager.settings[Setting.DoNotDisturb.rawValue] = selectedOption
         default:
             break
         }
