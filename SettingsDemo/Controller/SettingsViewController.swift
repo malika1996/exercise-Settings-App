@@ -253,7 +253,7 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
             vc.currentSetting = Setting.WiFi.rawValue
             vc.navigationItem.title = Setting.WiFi.rawValue
             // portrait of bigger and portrait & landcape mode of smaller devices
-            if (self.splitViewController?.viewControllers.count)!<=1 {
+            if self.splitViewController != nil && self.splitViewController!.isCollapsed {
                 self.navigationController?.pushViewController(vc, animated: true)
             } else {
                 let navController = UINavigationController(rootViewController: vc)
@@ -270,7 +270,7 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
             vc.currentSetting = Setting.Carrier.rawValue
             vc.navigationItem.title = Setting.Carrier.rawValue
             // portrait of bigger and portrait & landcape mode of smaller devices
-            if (self.splitViewController?.viewControllers.count)!<=1 {
+            if self.splitViewController != nil && self.splitViewController!.isCollapsed {
                 self.navigationController?.pushViewController(vc, animated: true)
             } else {
                 let navController = UINavigationController(rootViewController: vc)
@@ -285,7 +285,7 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
             vc.currentSetting = Setting.MobileData.rawValue
             vc.navigationItem.title = Setting.MobileData.rawValue
             // portrait of bigger and portrait & landcape mode of smaller devices
-            if (self.splitViewController?.viewControllers.count)!<=1 {
+            if self.splitViewController != nil && self.splitViewController!.isCollapsed {
                 self.navigationController?.pushViewController(vc, animated: true)
             } else {
                 let navController = UINavigationController(rootViewController: vc)
@@ -301,7 +301,7 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
             vc.currentSetting = Setting.Blutooth.rawValue
             vc.navigationItem.title = Setting.Blutooth.rawValue
             // portrait of bigger and portrait & landcape mode of smaller devices
-            if (self.splitViewController?.viewControllers.count)!<=1 {
+            if self.splitViewController != nil && self.splitViewController!.isCollapsed {
                 self.navigationController?.pushViewController(vc, animated: true)
             } else {
                 let navController = UINavigationController(rootViewController: vc)
@@ -317,7 +317,7 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
             vc.currentSetting = Setting.Notifications.rawValue
             vc.navigationItem.title = Setting.Notifications.rawValue
             // portrait of bigger and portrait & landcape mode of smaller devices
-            if (self.splitViewController?.viewControllers.count)!<=1 {
+            if self.splitViewController != nil && self.splitViewController!.isCollapsed {
                 self.navigationController?.pushViewController(vc, animated: true)
             } else {
                 let navController = UINavigationController(rootViewController: vc)
@@ -332,7 +332,7 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
             vc.currentSetting = Setting.DoNotDisturb.rawValue
             vc.navigationItem.title = Setting.DoNotDisturb.rawValue
             // portrait of bigger and portrait & landcape mode of smaller devices
-            if (self.splitViewController?.viewControllers.count)!<=1 {
+            if self.splitViewController != nil && self.splitViewController!.isCollapsed {
                 self.navigationController?.pushViewController(vc, animated: true)
             } else {
                 let navController = UINavigationController(rootViewController: vc)
@@ -346,7 +346,7 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
             vc.descriptionText = "General Screen"
             vc.navigationItem.title = Setting.General.rawValue
             // portrait of bigger and portrait & landcape mode of smaller devices
-            if (self.splitViewController?.viewControllers.count)!<=1 {
+            if self.splitViewController != nil && self.splitViewController!.isCollapsed {
                 self.navigationController?.pushViewController(vc, animated: true)
             } else {
                 let navController = UINavigationController(rootViewController: vc)
@@ -360,7 +360,7 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
             vc.descriptionText = "Wallpaper Screen"
             vc.navigationItem.title = Setting.Wallpaper.rawValue
             // portrait of bigger and portrait & landcape mode of smaller devices
-            if (self.splitViewController?.viewControllers.count)!<=1 {
+            if self.splitViewController != nil && self.splitViewController!.isCollapsed {
                 self.navigationController?.pushViewController(vc, animated: true)
             } else {
                 let navController = UINavigationController(rootViewController: vc)
@@ -373,7 +373,7 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
         if let vc = self.storyboard?.instantiateViewController(withIdentifier: "DisplayBrightnessViewController") as? DisplayBrightnessViewController {
             vc.navigationItem.title = Setting.DisplayBrightness.rawValue
             // portrait of bigger and portrait & landcape mode of smaller devices
-            if (self.splitViewController?.viewControllers.count)!<=1 {
+            if self.splitViewController != nil && self.splitViewController!.isCollapsed {
                 self.navigationController?.pushViewController(vc, animated: true)
             } else {
                 let navController = UINavigationController(rootViewController: vc)
@@ -514,6 +514,7 @@ extension SettingsViewController: SelectedDataSendProtocol {
         }
         self.tableView.reloadData()
     }
+    
 }
 
 // MARK: UIColor extension
