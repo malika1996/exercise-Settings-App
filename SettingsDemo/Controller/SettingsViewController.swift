@@ -49,7 +49,8 @@ class SettingsViewController: UIViewController {
     private var data = [SettingFeature]()
     private var filtered:[SettingFeature] = []
     private var settings = Settings.shared
-    private var searchActive : Bool = false
+    private var searchActive: Bool = false
+    private var searchText = ""
 
     // MARK: Private IBOutlets
     @IBOutlet private weak var tableView: UITableView!
@@ -156,9 +157,23 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let headerView = UIView()
+        let headerViewWithBorder = UIView()
+        let headerView = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 35))
         headerView.backgroundColor = #colorLiteral(red: 0.937254902, green: 0.937254902, blue: 0.9568627451, alpha: 1)
-        return headerView
+        let borderView = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 1))
+        borderView.backgroundColor = #colorLiteral(red: 0.8156862745, green: 0.8156862745, blue: 0.8156862745, alpha: 1)
+        headerViewWithBorder.addSubview(headerView)
+        headerViewWithBorder.addSubview(borderView)
+        NSLayoutConstraint.activate([
+            headerView.topAnchor.constraint(equalTo: headerViewWithBorder.topAnchor),
+            headerView.leftAnchor.constraint(equalTo: headerViewWithBorder.leftAnchor),
+            headerView.rightAnchor.constraint(equalTo: headerViewWithBorder.rightAnchor),
+            headerView.bottomAnchor.constraint(equalTo: borderView.topAnchor),
+            borderView.bottomAnchor.constraint(equalTo: headerViewWithBorder.bottomAnchor),
+            borderView.leftAnchor.constraint(equalTo: headerViewWithBorder.leftAnchor),
+            borderView.rightAnchor.constraint(equalTo: headerViewWithBorder.rightAnchor)
+        ])
+        return headerViewWithBorder
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -167,6 +182,10 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
         } else { //When search is not active
             self.rowActionWhenSearchIsInactive(section: indexPath.section, row: indexPath.row)
         }
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 35
     }
     
     // MARK: Cell setup methods
@@ -444,31 +463,31 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
 
 // MARK: Search bar delegate methods
 extension SettingsViewController: UISearchBarDelegate {
-    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        self.filtered = []
-    }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        var filteredDataSource : [SettingFeature] = []
-        searchActive = false
-        for settingFeature in data {
-            if let searchText = self.searchBar.text {
-                if settingFeature.name.lowercased().prefix(searchText.count) == searchText.lowercased() {
-                    searchActive = true
-                    filteredDataSource.append(settingFeature)
-                }
-            }
-        }
-        self.filtered = filteredDataSource
         searchBar.resignFirstResponder()
-        self.tableView.reloadData()
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchText == "" {
             self.searchActive = false
+            self.filtered = []
+            self.tableView.reloadData()
+        } else {
+            var filteredDataSource : [SettingFeature] = []
+            searchActive = false
+            for settingFeature in data {
+                if let searchText = self.searchBar.text {
+                    if settingFeature.name.lowercased().prefix(searchText.count) == searchText.lowercased() {
+                        searchActive = true
+                        filteredDataSource.append(settingFeature)
+                    }
+                }
+            }
+            self.filtered = filteredDataSource
             self.tableView.reloadData()
         }
+        self.searchText = searchText
     }
 }
 

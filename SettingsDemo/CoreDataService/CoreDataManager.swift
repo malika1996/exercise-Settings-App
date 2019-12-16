@@ -38,7 +38,6 @@ class CoreDataManager {
         } catch {
             print("Failed saving")
         }
-        
     }
     
     func fetchDataFromDisk() {
@@ -46,7 +45,6 @@ class CoreDataManager {
         do {
             let result = try context.fetch(request)
             for settings in result as! [NSManagedObject] {
-                print(settings.value(forKey: "airplaneMode") as! String)
                 if let airplaneMode = settings.value(forKey: "airplaneMode") as? String {
                     Settings.shared.airplaneMode = airplaneMode
                 }
@@ -73,5 +71,4 @@ class CoreDataManager {
             print("Failed")
         }
     }
-    
 }
